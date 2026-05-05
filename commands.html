@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指令大全 - 我的世界服务器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #636e72;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 0;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 20px 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin: 40px 0 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--gray);
+        }
+        
+        /* 搜索框 */
+        .search-container {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            border: 2px solid rgba(0, 168, 232, 0.2);
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 168, 232, 0.1);
+        }
+        
+        /* 分类导航 */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .category-btn {
+            padding: 10px 25px;
+            border: 2px solid rgba(0, 168, 232, 0.2);
+            background: transparent;
+            border-radius: 25px;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* 指令卡片 */
+        .commands-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .command-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 168, 232, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .command-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 168, 232, 0.15);
+            border-color: var(--primary);
+        }
+        
+        .command-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3em;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .command-desc {
+            color: var(--dark);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .command-usage {
+            background: rgba(0, 168, 232, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .command-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--secondary);
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        /* 无结果提示 */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--gray);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+                font-size: 0.9em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .commands-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="staff.html">管理组</a></li>
+                <li><a href="rules.html">规则</a></li>
+                <li><a href="commands.html" class="active">指令大全</a></li>
+                <li><a href="gallery.html">服务器风景</a></li>
+                <li><a href="contact.html">立即加入</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>指令大全</h1>
+            <p class="subtitle">服务器所有可用指令的详细说明</p>
+        </header>
+        
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索指令...">
+        </div>
+        
+        <!-- 分类导航 -->
+        <div class="category-nav" id="categoryNav">
+            <button class="category-btn active" data-category="all">全部指令</button>
+        </div>
+        
+        <!-- 指令列表 -->
+        <div class="commands-container" id="commandsContainer">
+            <!-- 指令卡片将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 MCQWQ 服务器. 保留所有权利.</p>
+    </footer>
+
+    <script>
+        // 默认指令数据
+        const defaultCommandsData = {
+            categories: [
+                { name: '基础指令', color: '#00a8e8' },
+                { name: '经济指令', color: '#00d4aa' },
+                { name: '传送指令', color: '#ff6b6b' },
+                { name: '管理指令', color: '#9b59b6' },
+                { name: '领地指令', color: '#f39c12' }
+            ],
+            commands: [
+                {
+                    name: '/help',
+                    description: '查看所有可用指令',
+                    usage: '/help [页码]',
+                    category: '基础指令'
+                },
+                {
+                    name: '/money',
+                    description: '查看自己的余额',
+                    usage: '/money',
+                    category: '经济指令'
+                },
+                {
+                    name: '/pay',
+                    description: '向其他玩家转账',
+                    usage: '/pay <玩家名称> <金额>',
+                    category: '经济指令'
+                },
+                {
+                    name: '/spawn',
+                    description: '传送到出生点',
+                    usage: '/spawn',
+                    category: '传送指令'
+                },
+                {
+                    name: '/home',
+                    description: '传送到家',
+                    usage: '/home [家的名称]',
+                    category: '传送指令'
+                },
+                {
+                    name: '/sethome',
+                    description: '设置家',
+                    usage: '/sethome [家的名称]',
+                    category: '传送指令'
+                },
+                {
+                    name: '/tp',
+                    description: '传送到其他玩家',
+                    usage: '/tp <玩家名称>',
+                    category: '传送指令'
+                },
+                {
+                    name: '/tpa',
+                    description: '请求传送到其他玩家',
+                    usage: '/tpa <玩家名称>',
+                    category: '传送指令'
+                },
+                {
+                    name: '/tpaccept',
+                    description: '接受传送请求',
+                    usage: '/tpaccept',
+                    category: '传送指令'
+                },
+                {
+                    name: '/tpdeny',
+                    description: '拒绝传送请求',
+                    usage: '/tpdeny',
+                    category: '传送指令'
+                },
+                {
+                    name: '/region',
+                    description: '领地管理指令',
+                    usage: '/region [create/claim/list/remove]',
+                    category: '领地指令'
+                },
+                {
+                    name: '/buy',
+                    description: '购买物品',
+                    usage: '/buy <物品ID> <数量>',
+                    category: '经济指令'
+                },
+                {
+                    name: '/sell',
+                    description: '出售物品',
+                    usage: '/sell <物品ID> <数量>',
+                    category: '经济指令'
+                },
+                {
+                    name: '/shop',
+                    description: '打开商店',
+                    usage: '/shop',
+                    category: '经济指令'
+                },
+                {
+                    name: '/warp',
+                    description: '传送到 warp 点',
+                    usage: '/warp <warp名称>',
+                    category: '传送指令'
+                },
+                {
+                    name: '/setwarp',
+                    description: '设置 warp 点',
+                    usage: '/setwarp <warp名称>',
+                    category: '传送指令'
+                }
+            ]
+        };
+
+        let currentCommandsData = null;
+        let filteredCommands = [];
+
+        // 加载指令数据
+        function loadCommandsData() {
+            const data = JSON.parse(localStorage.getItem('mcqwqData')) || {};
+            currentCommandsData = data.commands || defaultCommandsData;
+            renderCategories();
+            filterCommands('all', '');
+        }
+
+        // 渲染分类导航
+        function renderCategories() {
+            const nav = document.getElementById('categoryNav');
+            nav.innerHTML = '<button class="category-btn active" data-category="all">全部指令</button>';
+            
+            currentCommandsData.categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.setAttribute('data-category', category.name);
+                btn.textContent = category.name;
+                btn.style.borderColor = category.color;
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterCommands(category.name, document.getElementById('searchInput').value);
+                });
+                nav.appendChild(btn);
+            });
+        }
+
+        // 筛选指令
+        function filterCommands(category, searchTerm) {
+            filteredCommands = currentCommandsData.commands.filter(cmd => {
+                const matchesCategory = category === 'all' || cmd.category === category;
+                const matchesSearch = searchTerm === '' || 
+                    cmd.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    cmd.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    cmd.usage.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+            renderCommands();
+        }
+
+        // 渲染指令卡片
+        function renderCommands() {
+            const container = document.getElementById('commandsContainer');
+            container.innerHTML = '';
+            
+            if (filteredCommands.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<h3>没有找到匹配的指令</h3><p>请尝试其他关键词或分类</p>';
+                container.appendChild(noResults);
+                return;
+            }
+            
+            filteredCommands.forEach(cmd => {
+                const card = document.createElement('div');
+                card.className = 'command-card';
+                
+                const categoryInfo = currentCommandsData.categories.find(cat => cat.name === cmd.category);
+                const categoryColor = categoryInfo ? categoryInfo.color : '#00a8e8';
+                
+                card.innerHTML = `
+                    <div class="command-name">${cmd.name}</div>
+                    <div class="command-desc">${cmd.description}</div>
+                    <div class="command-usage">${cmd.usage}</div>
+                    <div class="command-category" style="background: rgba(${hexToRgb(categoryColor)}, 0.1); color: ${categoryColor};">
+                        ${cmd.category}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 十六进制颜色转RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 168, 232';
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value;
+            const activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
+            filterCommands(activeCategory, searchTerm);
+        });
+
+        // 页面加载时执行
+        window.addEventListener('DOMContentLoaded', loadCommandsData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器规则 - 我的世界服务器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #636e72;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 0;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 20px 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin: 40px 0 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--gray);
+        }
+        
+        .rules-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .rules-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--primary), var(--secondary)) 1;
+            display: inline-block;
+        }
+        
+        .rules-list {
+            list-style: none;
+        }
+        
+        .rules-list li {
+            padding: 20px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .rules-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 168, 232, 0.1);
+        }
+        
+        .rules-list li strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .punishment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .punishment-table th,
+        .punishment-table td {
+            padding: 18px;
+            text-align: left;
+        }
+        
+        .punishment-table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .punishment-table tr:nth-child(even) {
+            background: rgba(0, 168, 232, 0.05);
+        }
+        
+        .punishment-table tr:hover {
+            background: rgba(0, 168, 232, 0.1);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+                font-size: 0.9em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .punishment-table {
+                font-size: 0.9em;
+            }
+            
+            .punishment-table th,
+            .punishment-table td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="staff.html">管理组</a></li>
+                <li><a href="rules.html" class="active">规则</a></li>
+                <li><a href="commands.html">指令大全</a></li>
+                <li><a href="gallery.html">服务器风景</a></li>
+                <li><a href="contact.html">立即加入</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>服务器规则</h1>
+            <p class="subtitle">为了维护良好的游戏环境，请遵守以下规则</p>
+        </header>
+        
+        <!-- 动态规则内容容器 -->
+        <div id="rulesContainer">
+            <!-- 规则内容将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 MCQWQ 服务器. 保留所有权利.</p>
+    </footer>
+
+    <script src="js/dataManager.js"></script>
+    <script>
+        // 加载规则内容
+        function loadRulesContent() {
+            // 初始化数据
+            DataManager.init();
+            
+            // 获取规则数据
+            const rulesData = DataManager.get('rules');
+            const container = document.getElementById('rulesContainer');
+            
+            console.log('Rules data:', rulesData);
+            
+            container.innerHTML = '';
+            
+            if (!rulesData || !rulesData.sections || rulesData.sections.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--gray);">暂无规则内容</p>';
+                return;
+            }
+            
+            rulesData.sections.forEach((section, index) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'rules-section';
+                
+                const title = document.createElement('h2');
+                title.textContent = section.title || `规则分类 ${index + 1}`;
+                sectionDiv.appendChild(title);
+                
+                if (section.type === 'list' && section.items) {
+                    const list = document.createElement('ul');
+                    list.className = 'rules-list';
+                    
+                    section.items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${item.title || '未命名规则'}：</strong>${item.content || ''}`;
+                        list.appendChild(li);
+                    });
+                    
+                    sectionDiv.appendChild(list);
+                } else if (section.type === 'table' && section.rows) {
+                    const table = document.createElement('table');
+                    table.className = 'punishment-table';
+                    
+                    // 表头
+                    if (section.headers && section.headers.length > 0) {
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+                        section.headers.forEach(header => {
+                            const th = document.createElement('th');
+                            th.textContent = header;
+                            headerRow.appendChild(th);
+                        });
+                        thead.appendChild(headerRow);
+                        table.appendChild(thead);
+                    }
+                    
+                    // 表体
+                    const tbody = document.createElement('tbody');
+                    section.rows.forEach(row => {
+                        const tr = document.createElement('tr');
+                        row.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                    
+                    sectionDiv.appendChild(table);
+                } else if (section.type === 'list' && !section.items) {
+                    // 处理没有items的情况
+                    const list = document.createElement('ul');
+                    list.className = 'rules-list';
+                    list.innerHTML = '<li>暂无规则内容</li>';
+                    sectionDiv.appendChild(list);
+                }
+                
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // 页面加载时执行
+        window.addEventListener('DOMContentLoaded', loadRulesContent);
+    </script>
+</body>
+</html>

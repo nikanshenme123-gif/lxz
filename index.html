@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的世界服务器 - 官方网站</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #636e72;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 粒子背景画布 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 0;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #e8f5e9 100%);
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 168, 232, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 5px;
+        }
+        
+        .hero p {
+            font-size: 1.5em;
+            color: var(--gray);
+            margin-bottom: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            box-shadow: 0 10px 40px rgba(0, 168, 232, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 168, 232, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: 0 5px 20px rgba(0, 168, 232, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(0, 168, 232, 0.3);
+        }
+        
+        /* 特色区域 */
+        .features {
+            padding: 120px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 80px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 168, 232, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 168, 232, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 4em;
+            margin-bottom: 25px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .feature-card h3 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            line-height: 1.8;
+        }
+        
+        /* 服务器状态 */
+        .server-status {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+        
+        .status-item {
+            padding: 30px;
+            background: var(--white);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 168, 232, 0.1);
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .status-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 168, 232, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .status-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .status-label {
+            font-size: 1.2em;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        /* 实时服务器状态 */
+        .live-status {
+            background: var(--white);
+            padding: 100px 20px;
+            position: relative;
+        }
+        
+        .live-status-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .live-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .live-status-card {
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 168, 232, 0.2);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .live-status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.7s;
+        }
+        
+        .live-status-card:hover::before {
+            left: 100%;
+        }
+        
+        .live-status-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0, 168, 232, 0.15);
+        }
+        
+        .live-status-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .live-status-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            min-height: 1.2em;
+        }
+        
+        .live-status-label {
+            font-size: 1.1em;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* 最新公告 */
+        .announcements {
+            padding: 120px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .announcement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .announcement-item {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 168, 232, 0.1);
+            border-left: 4px solid var(--primary);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .announcement-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0,168,232,0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .announcement-item:hover::before {
+            opacity: 1;
+        }
+        
+        .announcement-item:hover {
+            transform: translateX(10px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 168, 232, 0.1);
+        }
+        
+        .announcement-date {
+            color: var(--primary);
+            font-size: 0.9em;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        
+        .announcement-title {
+            color: var(--dark);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .announcement-item p {
+            color: var(--gray);
+            line-height: 1.8;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: var(--dark);
+            padding: 60px 20px 40px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+        
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 20px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3em;
+                letter-spacing: 2px;
+            }
+            
+            .nav-links {
+                gap: 20px;
+                font-size: 0.9em;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 250px;
+            }
+            
+            .section-title {
+                font-size: 2em;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">首页</a></li>
+                <li><a href="staff.html">管理组</a></li>
+                <li><a href="rules.html">规则</a></li>
+                <li><a href="commands.html">指令大全</a></li>
+                <li><a href="gallery.html">服务器风景</a></li>
+                <li><a href="contact.html">立即加入</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>未来世界</h1>
+            <p>踏入赛博朋克风格的方块宇宙，体验前所未有的冒险旅程</p>
+            <div class="hero-buttons">
+                <a href="contact.html" class="btn btn-primary">立即加入</a>
+                <a href="rules.html" class="btn btn-secondary">查看规则</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2 class="section-title">服务器特色</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🏰</span>
+                <h3>生存模式</h3>
+                <p>经典的生存体验，收集资源、建造家园、对抗怪物，体验原汁原味的我的世界乐趣。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎨</span>
+                <h3>创造模式</h3>
+                <p>释放你的创造力，在创造模式中建造属于你的梦想建筑，展现无限想象。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚔️</span>
+                <h3>PVP竞技场</h3>
+                <p>与其他玩家一决高下，在竞技场中展示你的战斗技巧，赢取丰厚奖励。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🤝</span>
+                <h3>友好社区</h3>
+                <p>热情友好的玩家社区，活跃的Discord群组，让你在游戏中结识志同道合的朋友。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <h3>专业管理</h3>
+                <p>经验丰富的管理团队，24/7在线维护，确保服务器的稳定运行和公平游戏环境。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎁</span>
+                <h3>丰富活动</h3>
+                <p>定期举办各类活动，包括建筑大赛、寻宝活动、节日庆典等，奖励丰厚等你来拿。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="server-status">
+        <div class="status-container">
+            <div class="status-item">
+                <div class="status-number" id="statusVersion">1.20.1</div>
+                <div class="status-label">游戏版本</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number" id="statusPlayers">500+</div>
+                <div class="status-label">注册玩家</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number" id="statusUptime">99.9%</div>
+                <div class="status-label">在线率</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number" id="serverRuntime">--</div>
+                <div class="status-label">开服时长</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="live-status">
+        <div class="live-status-container">
+            <h2 class="section-title">实时服务器状态</h2>
+            <div class="live-status-grid">
+                <div class="live-status-card">
+                    <span class="live-status-icon">👥</span>
+                    <div class="live-status-value"><span ip="mcqwq.top">查询中</span></div>
+                    <div class="live-status-label">在线人数</div>
+                </div>
+                <div class="live-status-card">
+                    <span class="live-status-icon">📶</span>
+                    <div class="live-status-value"><span ping="mcqwq.top">查询中</span></div>
+                    <div class="live-status-label">网络延迟</div>
+                </div>
+                <div class="live-status-card">
+                    <span class="live-status-icon">📍</span>
+                    <div class="live-status-value"><span city="mcqwq.top">查询中</span></div>
+                    <div class="live-status-label">服务器位置</div>
+                </div>
+                <div class="live-status-card">
+                    <span class="live-status-icon">🖼️</span>
+                    <div class="live-status-value"><span logo="mcqwq.top">查询中</span></div>
+                    <div class="live-status-label">服务器图标</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="announcements">
+        <h2 class="section-title">最新公告</h2>
+        <div class="announcement-list">
+            <div class="announcement-item">
+                <div class="announcement-date">2026-03-25</div>
+                <div class="announcement-title">服务器升级完成</div>
+                <p>我们已完成服务器硬件升级，现在游戏运行更加流畅，欢迎大家体验！</p>
+            </div>
+            <div class="announcement-item">
+                <div class="announcement-date">2026-03-20</div>
+                <div class="announcement-title">春季建筑大赛开始报名</div>
+                <p>春季建筑大赛正式开始报名，主题为"未来城市"，丰厚奖励等你来拿！</p>
+            </div>
+            <div class="announcement-item">
+                <div class="announcement-date">2026-03-15</div>
+                <div class="announcement-title">新插件上线</div>
+                <p>新增家园保护插件和经济系统，让游戏体验更加丰富有趣。</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">首页</a>
+                <a href="staff.html">管理组</a>
+                <a href="rules.html">规则</a>
+                <a href="contact.html">立即加入</a>
+            </div>
+            <p>&copy; 2026 MCQWQ 服务器. 保留所有权利.</p>
+            <p>本站与Mojang Studios或Microsoft无关</p>
+        </div>
+    </footer>
+
+    <script src="https://list.mczfw.com/mczfw.js" async></script>
+    <script>
+        // 加载数据
+        function loadContent() {
+            // 获取LocalStorage数据
+            let data = null;
+            try {
+                const savedData = localStorage.getItem('mcqwqData');
+                if (savedData) {
+                    data = JSON.parse(savedData);
+                }
+            } catch (e) {
+                console.error('读取LocalStorage失败:', e);
+            }
+            
+            // 默认数据
+            const defaultData = {
+                hero: {
+                    title: '未来世界',
+                    description: '踏入赛博朋克风格的方块宇宙，体验前所未有的冒险旅程'
+                },
+                features: [
+                    { icon: '🏰', title: '生存模式', description: '经典的生存体验，收集资源、建造家园、对抗怪物，体验原汁原味的我的世界乐趣。' },
+                    { icon: '🎨', title: '创造模式', description: '释放你的创造力，在创造模式中建造属于你的梦想建筑，展现无限想象。' },
+                    { icon: '⚔️', title: 'PVP竞技场', description: '与其他玩家一决高下，在竞技场中展示你的战斗技巧，赢取丰厚奖励。' },
+                    { icon: '🤝', title: '友好社区', description: '热情友好的玩家社区，活跃的Discord群组，让你在游戏中结识志同道合的朋友。' },
+                    { icon: '🛡️', title: '专业管理', description: '经验丰富的管理团队，24/7在线维护，确保服务器的稳定运行和公平游戏环境。' },
+                    { icon: '🎁', title: '丰富活动', description: '定期举办各类活动，包括建筑大赛、寻宝活动、节日庆典等，奖励丰厚等你来拿。' }
+                ],
+                status: {
+                    version: '1.20.1',
+                    players: '500+',
+                    uptime: '99.9%',
+                    startDate: '2024-01-01'
+                },
+                announcements: [
+                    { date: '2026-03-25', title: '服务器升级完成', content: '我们已完成服务器硬件升级，现在游戏运行更加流畅，欢迎大家体验！' },
+                    { date: '2026-03-20', title: '春季建筑大赛开始报名', content: '春季建筑大赛正式开始报名，主题为"未来城市"，丰厚奖励等你来拿！' },
+                    { date: '2026-03-15', title: '新插件上线', content: '新增家园保护插件和经济系统，让游戏体验更加丰富有趣。' }
+                ]
+            };
+            
+            // 合并数据（优先使用LocalStorage的数据）
+            const mergedData = {
+                hero: data && data.hero ? data.hero : defaultData.hero,
+                features: data && data.features ? data.features : defaultData.features,
+                status: data && data.status ? {
+                    version: data.status.version || defaultData.status.version,
+                    players: data.status.players || defaultData.status.players,
+                    uptime: data.status.uptime || defaultData.status.uptime,
+                    startDate: data.status.startDate || defaultData.status.startDate
+                } : defaultData.status,
+                announcements: data && data.announcements ? data.announcements : defaultData.announcements
+            };
+            
+            // 更新英雄区域
+            document.querySelector('.hero h1').textContent = mergedData.hero.title;
+            document.querySelector('.hero p').textContent = mergedData.hero.description;
+            
+            // 更新特色卡片
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach((card, index) => {
+                if (mergedData.features[index]) {
+                    const feature = mergedData.features[index];
+                    card.querySelector('.feature-icon').textContent = feature.icon;
+                    card.querySelector('.feature-card h3').textContent = feature.title;
+                    card.querySelector('.feature-card p').textContent = feature.description;
+                }
+            });
+            
+            // 更新服务器状态
+            document.getElementById('statusVersion').textContent = mergedData.status.version;
+            document.getElementById('statusPlayers').textContent = mergedData.status.players;
+            document.getElementById('statusUptime').textContent = mergedData.status.uptime;
+            
+            // 计算开服时长
+            const startDate = mergedData.status.startDate;
+            const start = new Date(startDate);
+            const now = new Date();
+            const diff = now - start;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById('serverRuntime').textContent = days > 0 ? `${days}天${hours}小时` : `${hours}小时`;
+            
+            // 更新公告
+            const announcementItems = document.querySelectorAll('.announcement-item');
+            announcementItems.forEach((item, index) => {
+                if (mergedData.announcements[index]) {
+                    const announce = mergedData.announcements[index];
+                    item.querySelector('.announcement-date').textContent = announce.date;
+                    item.querySelector('.announcement-title').textContent = announce.title;
+                    item.querySelector('.announcement-item p').textContent = announce.content;
+                }
+            });
+        }
+        
+        // 粒子背景动画
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particles = [];
+        const particleCount = 80;
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.3 + 0.1;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            
+            draw() {
+                ctx.fillStyle = `rgba(0, 168, 232, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function init() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制连线
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 168, 232, ${0.05 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 滚动显示动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.feature-card, .status-item, .live-status-card, .announcement-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+        
+        // 页面加载时执行
+        window.addEventListener('DOMContentLoaded', () => {
+            loadContent();
+            init();
+            animate();
+        });
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
