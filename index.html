@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的世界服务器 - 官方网站</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MCQWQ · 我的世界服务器官方网站</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
         
@@ -434,7 +434,7 @@
         
         .live-status-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: 700;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
@@ -449,6 +449,17 @@
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 2px;
+        }
+        
+        .server-icon-img {
+            width: 48px;
+            height: 48px;
+            image-rendering: crisp-edges;
+            border-radius: 12px;
+            margin: 0 auto;
+            display: block;
+            background: rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         /* 最新公告 */
@@ -650,43 +661,14 @@
     <section class="features">
         <h2 class="section-title">服务器特色</h2>
         <div class="features-grid">
-            <div class="feature-card">
-                <span class="feature-icon">🏰</span>
-                <h3>生存模式</h3>
-                <p>经典的生存体验，收集资源、建造家园、对抗怪物，体验原汁原味的我的世界乐趣。</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">🎨</span>
-                <h3>创造模式</h3>
-                <p>释放你的创造力，在创造模式中建造属于你的梦想建筑，展现无限想象。</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">⚔️</span>
-                <h3>PVP竞技场</h3>
-                <p>与其他玩家一决高下，在竞技场中展示你的战斗技巧，赢取丰厚奖励。</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">🤝</span>
-                <h3>友好社区</h3>
-                <p>热情友好的玩家社区，活跃的Discord群组，让你在游戏中结识志同道合的朋友。</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">🛡️</span>
-                <h3>专业管理</h3>
-                <p>经验丰富的管理团队，24/7在线维护，确保服务器的稳定运行和公平游戏环境。</p>
-            </div>
-            <div class="feature-card">
-                <span class="feature-icon">🎁</span>
-                <h3>丰富活动</h3>
-                <p>定期举办各类活动，包括建筑大赛、寻宝活动、节日庆典等，奖励丰厚等你来拿。</p>
-            </div>
+            <!-- 卡片内容由js动态填充（保留静态兼容） -->
         </div>
     </section>
 
     <section class="server-status">
         <div class="status-container">
             <div class="status-item">
-                <div class="status-number" id="statusVersion">1.20.1</div>
+                <div class="status-number" id="statusVersion">1.21.11</div>
                 <div class="status-label">游戏版本</div>
             </div>
             <div class="status-item">
@@ -710,22 +692,22 @@
             <div class="live-status-grid">
                 <div class="live-status-card">
                     <span class="live-status-icon">👥</span>
-                    <div class="live-status-value"><span ip="mcqwq.top">查询中</span></div>
+                    <div class="live-status-value" id="onlinePlayersSpan">查询中</div>
                     <div class="live-status-label">在线人数</div>
                 </div>
                 <div class="live-status-card">
                     <span class="live-status-icon">📶</span>
-                    <div class="live-status-value"><span ping="mcqwq.top">查询中</span></div>
+                    <div class="live-status-value" id="pingSpan">查询中</div>
                     <div class="live-status-label">网络延迟</div>
                 </div>
                 <div class="live-status-card">
                     <span class="live-status-icon">📍</span>
-                    <div class="live-status-value"><span city="mcqwq.top">查询中</span></div>
+                    <div class="live-status-value" id="locationSpan">中国 · 上海</div>
                     <div class="live-status-label">服务器位置</div>
                 </div>
                 <div class="live-status-card">
                     <span class="live-status-icon">🖼️</span>
-                    <div class="live-status-value"><span logo="mcqwq.top">查询中</span></div>
+                    <div class="live-status-value" id="iconContainer"></div>
                     <div class="live-status-label">服务器图标</div>
                 </div>
             </div>
@@ -734,23 +716,7 @@
 
     <section class="announcements">
         <h2 class="section-title">最新公告</h2>
-        <div class="announcement-list">
-            <div class="announcement-item">
-                <div class="announcement-date">2026-03-25</div>
-                <div class="announcement-title">服务器升级完成</div>
-                <p>我们已完成服务器硬件升级，现在游戏运行更加流畅，欢迎大家体验！</p>
-            </div>
-            <div class="announcement-item">
-                <div class="announcement-date">2026-03-20</div>
-                <div class="announcement-title">春季建筑大赛开始报名</div>
-                <p>春季建筑大赛正式开始报名，主题为"未来城市"，丰厚奖励等你来拿！</p>
-            </div>
-            <div class="announcement-item">
-                <div class="announcement-date">2026-03-15</div>
-                <div class="announcement-title">新插件上线</div>
-                <p>新增家园保护插件和经济系统，让游戏体验更加丰富有趣。</p>
-            </div>
-        </div>
+        <div class="announcement-list"></div>
     </section>
 
     <footer>
@@ -766,27 +732,19 @@
         </div>
     </footer>
 
-    <script src="https://list.mczfw.com/mczfw.js" async></script>
     <script>
-        // 加载数据
+        // --------------------------------------------------------------
+        // 1. 本地存储 / 默认数据 (特色、公告、注册玩家等)
+        // --------------------------------------------------------------
         function loadContent() {
-            // 获取LocalStorage数据
             let data = null;
             try {
                 const savedData = localStorage.getItem('mcqwqData');
-                if (savedData) {
-                    data = JSON.parse(savedData);
-                }
-            } catch (e) {
-                console.error('读取LocalStorage失败:', e);
-            }
+                if (savedData) data = JSON.parse(savedData);
+            } catch(e) { console.error(e); }
             
-            // 默认数据
             const defaultData = {
-                hero: {
-                    title: '未来世界',
-                    description: '踏入赛博朋克风格的方块宇宙，体验前所未有的冒险旅程'
-                },
+                hero: { title: '未来世界', description: '踏入赛博朋克风格的方块宇宙，体验前所未有的冒险旅程' },
                 features: [
                     { icon: '🏰', title: '生存模式', description: '经典的生存体验，收集资源、建造家园、对抗怪物，体验原汁原味的我的世界乐趣。' },
                     { icon: '🎨', title: '创造模式', description: '释放你的创造力，在创造模式中建造属于你的梦想建筑，展现无限想象。' },
@@ -795,12 +753,7 @@
                     { icon: '🛡️', title: '专业管理', description: '经验丰富的管理团队，24/7在线维护，确保服务器的稳定运行和公平游戏环境。' },
                     { icon: '🎁', title: '丰富活动', description: '定期举办各类活动，包括建筑大赛、寻宝活动、节日庆典等，奖励丰厚等你来拿。' }
                 ],
-                status: {
-                    version: '1.20.1',
-                    players: '500+',
-                    uptime: '99.9%',
-                    startDate: '2024-01-01'
-                },
+                status: { version: '1.21.11', players: '500+', uptime: '99.9%', startDate: '2024-01-01' },
                 announcements: [
                     { date: '2026-03-25', title: '服务器升级完成', content: '我们已完成服务器硬件升级，现在游戏运行更加流畅，欢迎大家体验！' },
                     { date: '2026-03-20', title: '春季建筑大赛开始报名', content: '春季建筑大赛正式开始报名，主题为"未来城市"，丰厚奖励等你来拿！' },
@@ -808,69 +761,141 @@
                 ]
             };
             
-            // 合并数据（优先使用LocalStorage的数据）
-            const mergedData = {
-                hero: data && data.hero ? data.hero : defaultData.hero,
-                features: data && data.features ? data.features : defaultData.features,
-                status: data && data.status ? {
-                    version: data.status.version || defaultData.status.version,
-                    players: data.status.players || defaultData.status.players,
-                    uptime: data.status.uptime || defaultData.status.uptime,
-                    startDate: data.status.startDate || defaultData.status.startDate
-                } : defaultData.status,
-                announcements: data && data.announcements ? data.announcements : defaultData.announcements
+            const merged = {
+                hero: data?.hero || defaultData.hero,
+                features: data?.features || defaultData.features,
+                status: { ...defaultData.status, ...(data?.status || {}) },
+                announcements: data?.announcements || defaultData.announcements
             };
             
-            // 更新英雄区域
-            document.querySelector('.hero h1').textContent = mergedData.hero.title;
-            document.querySelector('.hero p').textContent = mergedData.hero.description;
+            document.querySelector('.hero h1').textContent = merged.hero.title;
+            document.querySelector('.hero p').textContent = merged.hero.description;
             
-            // 更新特色卡片
-            const featureCards = document.querySelectorAll('.feature-card');
-            featureCards.forEach((card, index) => {
-                if (mergedData.features[index]) {
-                    const feature = mergedData.features[index];
-                    card.querySelector('.feature-icon').textContent = feature.icon;
-                    card.querySelector('.feature-card h3').textContent = feature.title;
-                    card.querySelector('.feature-card p').textContent = feature.description;
-                }
+            const featuresGrid = document.querySelector('.features-grid');
+            featuresGrid.innerHTML = '';
+            merged.features.forEach(f => {
+                featuresGrid.innerHTML += `
+                    <div class="feature-card">
+                        <span class="feature-icon">${f.icon}</span>
+                        <h3>${f.title}</h3>
+                        <p>${f.description}</p>
+                    </div>
+                `;
             });
             
-            // 更新服务器状态
-            document.getElementById('statusVersion').textContent = mergedData.status.version;
-            document.getElementById('statusPlayers').textContent = mergedData.status.players;
-            document.getElementById('statusUptime').textContent = mergedData.status.uptime;
+            document.getElementById('statusVersion').textContent = merged.status.version;
+            document.getElementById('statusPlayers').textContent = merged.status.players;
+            document.getElementById('statusUptime').textContent = merged.status.uptime;
             
-            // 计算开服时长
-            const startDate = mergedData.status.startDate;
-            const start = new Date(startDate);
+            const start = new Date(merged.status.startDate);
             const now = new Date();
             const diff = now - start;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000*60*60*24));
+            const hours = Math.floor((diff % (86400000)) / 3600000);
             document.getElementById('serverRuntime').textContent = days > 0 ? `${days}天${hours}小时` : `${hours}小时`;
             
-            // 更新公告
-            const announcementItems = document.querySelectorAll('.announcement-item');
-            announcementItems.forEach((item, index) => {
-                if (mergedData.announcements[index]) {
-                    const announce = mergedData.announcements[index];
-                    item.querySelector('.announcement-date').textContent = announce.date;
-                    item.querySelector('.announcement-title').textContent = announce.title;
-                    item.querySelector('.announcement-item p').textContent = announce.content;
-                }
+            const announceList = document.querySelector('.announcement-list');
+            announceList.innerHTML = '';
+            merged.announcements.forEach(a => {
+                announceList.innerHTML += `
+                    <div class="announcement-item">
+                        <div class="announcement-date">${a.date}</div>
+                        <div class="announcement-title">${a.title}</div>
+                        <p>${a.content}</p>
+                    </div>
+                `;
             });
         }
         
-        // 粒子背景动画
+        // --------------------------------------------------------------
+        // 2. 实时服务器状态 (MCSrvStat.us API) - 已配置为 play.simpfun.cn:31740
+        // --------------------------------------------------------------
+        const SERVER_HOST = 'play.simpfun.cn:31740';
+        const API_URL = `https://api.mcsrvstat.us/3/${SERVER_HOST}`;
+        
+        async function fetchRealTimeStatus() {
+            const startTime = performance.now();
+            const onlineSpan = document.getElementById('onlinePlayersSpan');
+            const pingSpan = document.getElementById('pingSpan');
+            const iconContainer = document.getElementById('iconContainer');
+            
+            // 显示加载中效果
+            onlineSpan.textContent = '⌛';
+            pingSpan.textContent = '-- ms';
+            iconContainer.innerHTML = '<div style="font-size:0.9rem;">加载中...</div>';
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const response = await fetch(API_URL, {
+                    signal: controller.signal,
+                    headers: {
+                        'User-Agent': 'MCQWQ-Website/1.0 (contact@mcqwq.top)'
+                    }
+                });
+                clearTimeout(timeoutId);
+                const endTime = performance.now();
+                const estimatedPing = Math.round(endTime - startTime);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                
+                if (data.online) {
+                    // 在线人数
+                    const online = data.players?.online ?? '?';
+                    onlineSpan.textContent = online;
+                    // 延迟 (近似)
+                    pingSpan.textContent = `${estimatedPing} ms`;
+                    
+                    // 服务器图标 (base64)
+                    if (data.icon && data.icon.startsWith('data:image/png;base64,')) {
+                        const img = document.createElement('img');
+                        img.src = data.icon;
+                        img.alt = '服务器图标';
+                        img.className = 'server-icon-img';
+                        img.style.width = '64px';
+                        img.style.height = '64px';
+                        iconContainer.innerHTML = '';
+                        iconContainer.appendChild(img);
+                    } else {
+                        iconContainer.innerHTML = '<span style="font-size:1rem;">✨ 在线</span>';
+                    }
+                    // 可选：从 API 获取版本号，更新到某个位置（但不强制）
+                    if (data.version && data.version.includes) {
+                        const versionElem = document.getElementById('statusVersion');
+                        if (versionElem && data.version !== '1.21.11') {
+                            // 仅当版本确实不同时更新，避免覆盖本地存储设定
+                            versionElem.textContent = data.version;
+                        }
+                    }
+                } else {
+                    onlineSpan.textContent = '❌ 离线';
+                    pingSpan.textContent = '--';
+                    iconContainer.innerHTML = '<span style="font-size:1rem;">💤 休眠</span>';
+                }
+            } catch (err) {
+                console.warn('实时状态获取失败:', err);
+                onlineSpan.textContent = '⏳ 超时';
+                pingSpan.textContent = '-- ms';
+                iconContainer.innerHTML = '<span style="font-size:0.85rem;">🔌 无法连接</span>';
+                // 延迟显示错误不影响整体体验
+            }
+        }
+        
+        // 定时器 (30秒刷新)
+        let statusInterval = null;
+        
+        // --------------------------------------------------------------
+        // 3. 粒子背景 & 滚动动画 (保留原样)
+        // --------------------------------------------------------------
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
+        let particles = [];
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const particles = [];
-        const particleCount = 80;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
         
         class Particle {
             constructor() {
@@ -881,17 +906,14 @@
                 this.speedY = Math.random() * 0.5 - 0.25;
                 this.opacity = Math.random() * 0.3 + 0.1;
             }
-            
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                
                 if (this.x > canvas.width) this.x = 0;
                 if (this.x < 0) this.x = canvas.width;
                 if (this.y > canvas.height) this.y = 0;
                 if (this.y < 0) this.y = canvas.height;
             }
-            
             draw() {
                 ctx.fillStyle = `rgba(0, 168, 232, ${this.opacity})`;
                 ctx.beginPath();
@@ -900,74 +922,73 @@
             }
         }
         
-        function init() {
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
+        function initParticles() {
+            particles = [];
+            const count = Math.min(80, Math.floor(window.innerWidth / 20));
+            for (let i = 0; i < count; i++) particles.push(new Particle());
         }
         
-        function animate() {
+        function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 绘制连线
             for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
+                for (let j = i+1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 150) {
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < 150) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(0, 168, 232, ${0.05 * (1 - distance / 150)})`;
-                        ctx.lineWidth = 0.5;
+                        ctx.strokeStyle = `rgba(0, 168, 232, ${0.05 * (1 - dist/150)})`;
+                        ctx.lineWidth = 0.6;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         ctx.stroke();
                     }
                 }
+                particles[i].update();
+                particles[i].draw();
             }
-            
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateParticles);
         }
         
-        // 滚动显示动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
+        function observeScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.feature-card, .status-item, .live-status-card, .announcement-item').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
             });
-        }, observerOptions);
+        }
         
-        document.querySelectorAll('.feature-card, .status-item, .live-status-card, .announcement-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease-out';
-            observer.observe(el);
-        });
-        
-        // 页面加载时执行
+        // --------------------------------------------------------------
+        // 4. 启动所有功能
+        // --------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
-            loadContent();
-            init();
-            animate();
+            loadContent();                // 加载静态数据（版本/注册玩家/公告/特色）
+            fetchRealTimeStatus();       // 立即获取实时数据
+            if (statusInterval) clearInterval(statusInterval);
+            statusInterval = setInterval(fetchRealTimeStatus, 30000); // 30秒自动刷新
+            
+            resizeCanvas();
+            initParticles();
+            animateParticles();
+            observeScroll();
         });
         
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            resizeCanvas();
+            initParticles();
         });
+        
+        // 位置信息无法从协议获取, 手动说明(可改为真实机房城市)
+        document.getElementById('locationSpan').textContent = '中国 · 上海';
     </script>
 </body>
 </html>
