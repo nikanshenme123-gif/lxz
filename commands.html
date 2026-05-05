@@ -323,7 +323,7 @@
     </footer>
 
     <script>
-        // 默认指令数据
+        // 默认指令数据 - 彻底修正语法错误（缺失逗号、拼写、缺失冒号、字符串闭合）
         const defaultCommandsData = {
             categories: [
                 { name: '基础指令', color: '#00a8e8' },
@@ -389,51 +389,52 @@
                 },
                 {
                     name: '/ah sell',
-                    descripition: '上架手上物品 只算总体总共价格',
+                    description: '上架手上物品 只算总体总共价格',
                     usage: '/ah sell <价格>',
                     category: '经济指令'
                 },
                 {
-                    name: '/ah sell',
+                    name: '/ah sell (单价)',
                     description: '上架手上的物品的单价',
                     usage: '/ah sell <价格> <数量>',
                     category: '经济指令'
                 },
                 {
-                    name: '/ah sell',
+                    name: '/ah selling',
                     description: '可以查看已上架被购买的物品 也可以撤销',
                     usage: '/ah selling',
-                    category '经济指令'
+                    category: '经济指令'
                 },
                 {
-                   name: '/ah sold',
-                   descriprion: '查看已售卖的物品',
-                   usage: '/ah sold',
-                   category '经济系统'
-               },
-               {
-                  name: '/ah expired',
-                  descriprion: '取回超时的物品',
-                  usage: '/ah expired',
-                  category: '经济系统'
-              },
-              {
-                  name: '/ah bid',
-                  descriprion: '竞拍模式',
-                  usage: '/ah bid <商品ID> <价格>',
-                  category: '经济系统'
-              },
-              {
-                  name: '/ah buy',
-                  descriprion: '对指定物品快速购买 按商家价格',
-                  usage: '/ah buy <商品ID>',
-                  category: '经济系统'
-              },
-              {
-                 name: '/ah quickbuy',
-                 descripriom: '一键快速购买',
-                 usage: '/ah quickbuy',
-                 categoy: '经济系统'
+                    name: '/ah sold',
+                    description: '查看已售卖的物品',
+                    usage: '/ah sold',
+                    category: '经济系统'
+                },
+                {
+                    name: '/ah expired',
+                    description: '取回超时的物品',
+                    usage: '/ah expired',
+                    category: '经济系统'
+                },
+                {
+                    name: '/ah bid',
+                    description: '竞拍模式',
+                    usage: '/ah bid <商品ID> <价格>',
+                    category: '经济系统'
+                },
+                {
+                    name: '/ah buy',
+                    description: '对指定物品快速购买 按商家价格',
+                    usage: '/ah buy <商品ID>',
+                    category: '经济系统'
+                },
+                {
+                    name: '/ah quickbuy',
+                    description: '一键快速购买',
+                    usage: '/ah quickbuy',
+                    category: '经济系统'
+                }
             ]
         };
 
@@ -473,9 +474,9 @@
             filteredCommands = currentCommandsData.commands.filter(cmd => {
                 const matchesCategory = category === 'all' || cmd.category === category;
                 const matchesSearch = searchTerm === '' || 
-                    cmd.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    cmd.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    cmd.usage.toLowerCase().includes(searchTerm.toLowerCase());
+                    (cmd.name && cmd.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (cmd.description && cmd.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (cmd.usage && cmd.usage.toLowerCase().includes(searchTerm.toLowerCase()));
                 return matchesCategory && matchesSearch;
             });
             renderCommands();
@@ -498,18 +499,32 @@
                 const card = document.createElement('div');
                 card.className = 'command-card';
                 
-                const categoryInfo = currentCommandsData.categories.find(cat => cat.name === cmd.category);
-                const categoryColor = categoryInfo ? categoryInfo.color : '#00a8e8';
+                // 查找分类颜色，如果找不到（例如“经济系统”）则使用主色调
+                let categoryInfo = currentCommandsData.categories.find(cat => cat.name === cmd.category);
+                let categoryColor = categoryInfo ? categoryInfo.color : '#00a8e8';
                 
                 card.innerHTML = `
-                    <div class="command-name">${cmd.name}</div>
-                    <div class="command-desc">${cmd.description}</div>
-                    <div class="command-usage">${cmd.usage}</div>
+                    <div class="command-name">${escapeHtml(cmd.name)}</div>
+                    <div class="command-desc">${escapeHtml(cmd.description)}</div>
+                    <div class="command-usage">${escapeHtml(cmd.usage)}</div>
                     <div class="command-category" style="background: rgba(${hexToRgb(categoryColor)}, 0.1); color: ${categoryColor};">
-                        ${cmd.category}
+                        ${escapeHtml(cmd.category)}
                     </div>
                 `;
                 container.appendChild(card);
+            });
+        }
+
+        // 简单的防XSS辅助函数
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
             });
         }
 
