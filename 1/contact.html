@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>立即加入 - MCQWQ服务器</title>
+    <style>
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        .nav-item {
+            margin-left: 30px;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        .nav-link.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        .btn-primary {
+            display: inline-block;
+            background: white;
+            color: var(--primary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* 加入步骤 */
+        .join-steps {
+            padding: 80px 0;
+            background: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--dark);
+        }
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .step-card {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        .step-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        .step-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* 加入教程 */
+        .join-guide {
+            padding: 80px 0;
+            background: var(--light);
+        }
+        .guide-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .guide-section {
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .guide-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        .guide-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .guide-section ul {
+            list-style: none;
+            margin: 15px 0;
+        }
+        .guide-section li {
+            padding: 8px 0;
+            color: #666;
+            position: relative;
+            padding-left: 25px;
+        }
+        .guide-section li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+        
+        /* 服务器信息 */
+        .server-info {
+            padding: 80px 0;
+            background: white;
+            text-align: center;
+        }
+        .info-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 10px;
+        }
+        .info-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        .server-ip {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        /* 常见问题 */
+        .faq {
+            padding: 80px 0;
+            background: var(--light);
+        }
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .faq-question {
+            width: 100%;
+            padding: 20px;
+            background: white;
+            border: none;
+            text-align: left;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question:hover {
+            background: #f8f9fa;
+        }
+        .faq-answer {
+            padding: 0 20px 20px;
+            color: #666;
+            display: none;
+        }
+        .faq-answer.active {
+            display: block;
+        }
+        
+        /* 页脚 */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+        .footer-section h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        .footer-section p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .footer-section a:hover {
+            opacity: 1;
+        }
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.6;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+                transform: translateY(-100%);
+                transition: transform 0.3s;
+            }
+            .nav-menu.active {
+                transform: translateY(0);
+            }
+            .nav-item {
+                margin: 10px 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            .step-card {
+                padding: 30px;
+            }
+            .guide-section,
+            .info-card {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .server-ip {
+                font-size: 1.2rem;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="index.html" class="nav-link">首页</a></li>
+                <li class="nav-item"><a href="staff.html" class="nav-link">管理团队</a></li>
+                <li class="nav-item"><a href="rules.html" class="nav-link">服务器规则</a></li>
+                <li class="nav-item"><a href="commands.html" class="nav-link">指令大全</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">服务器风景</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link active">立即加入</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1>🚀 立即加入我们</h1>
+            <p>加入MCQWQ服务器，开始你的冒险之旅！</p>
+            <a href="#steps" class="btn-primary">开始加入</a>
+        </div>
+    </section>
+
+    <!-- 加入步骤 -->
+    <section class="join-steps" id="steps">
+        <div class="container">
+            <h2 class="section-title">加入步骤</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>下载游戏</h3>
+                    <p>确保你有 Minecraft 1.20.1 版本，这是我们服务器使用的版本。</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>添加服务器</h3>
+                    <p>在游戏中添加服务器，输入 IP 地址：mcqwq.top</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>开始游戏</h3>
+                    <p>点击加入服务器，开始你的冒险之旅！</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 加入教程 -->
+    <section class="join-guide" id="guide">
+        <div class="container">
+            <h2 class="section-title">详细教程</h2>
+            <div class="guide-container" id="guideContent">
+                <!-- 教程内容将通过JS加载 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务器信息 -->
+    <section class="server-info">
+        <div class="container">
+            <div class="info-card">
+                <h3>服务器信息</h3>
+                <p>版本：1.20.1</p>
+                <p>IP地址：<span class="server-ip">mcqwq.top</span></p>
+
+                <p>欢迎加入我们的服务器！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 常见问题 -->
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">常见问题</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        如何解决连接问题？
+                        <span>▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>确保你的游戏版本是 1.20.1，检查网络连接，或者尝试重新启动游戏。如果问题持续存在，请联系管理员。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        服务器有什么特色？
+                        <span>▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>我们的服务器拥有多种游戏模式，包括生存、创造、PVP等，还有丰富的插件和活动等你来体验！</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        如何成为管理员？
+                        <span>▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>服务器会定期招募管理员，你需要在服务器中积极参与，遵守规则，展现出你的能力和责任心。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>服务器信息</h3>
+                <p>版本：1.20.1</p>
+                <p>IP：mcqwq.top</p>
+                <p>端口：25565</p>
+            </div>
+            <div class="footer-section">
+                <h3>快速链接</h3>
+                <p><a href="index.html">首页</a></p>
+                <p><a href="staff.html">管理团队</a></p>
+                <p><a href="rules.html">服务器规则</a></p>
+                <p><a href="commands.html">指令大全</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <p>QQ群：123456789</p>
+                <p>邮箱：admin@mcqwq.top</p>
+                <p>官方网站：mcqwq.top</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 MCQWQ服务器. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="js/dataManager.js"></script>
+    <script>
+        // 移动端菜单
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+        
+        // FAQ切换
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('active');
+            const icon = element.querySelector('span');
+            icon.textContent = answer.classList.contains('active') ? '▲' : '▼';
+        }
+        
+        // 加载加入教程
+        function loadJoinGuide() {
+            const guideContent = document.getElementById('guideContent');
+            const guideData = DataManager.get('joinGuide');
+            
+            guideContent.innerHTML = '';
+            guideData.sections.forEach(section => {
+                guideContent.innerHTML += `
+                    <div class="guide-section">
+                        <h3>${section.title}</h3>
+                        <p>${section.content}</p>
+                        ${section.steps ? `
+                            <ul>
+                                ${section.steps.map(step => `<li>${step}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>
+                `;
+            });
+        }
+        
+        // 页面加载时
+        window.addEventListener('DOMContentLoaded', loadJoinGuide);
+    </script>
+</body>
+</html>

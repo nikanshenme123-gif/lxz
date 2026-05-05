@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器风景 - 我的世界服务器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #636e72;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 0;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 20px 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin: 40px 0 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--gray);
+        }
+        
+        /* 搜索框 */
+        .search-container {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            border: 2px solid rgba(0, 168, 232, 0.2);
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 168, 232, 0.1);
+        }
+        
+        /* 分类导航 */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .category-btn {
+            padding: 10px 25px;
+            border: 2px solid rgba(0, 168, 232, 0.2);
+            background: transparent;
+            border-radius: 25px;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* 图片画廊 */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .gallery-item {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 168, 232, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 168, 232, 0.15);
+            border-color: var(--primary);
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+        }
+        
+        .gallery-content {
+            padding: 20px;
+        }
+        
+        .gallery-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .gallery-desc {
+            color: var(--gray);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .gallery-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--secondary);
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        /* 无结果提示 */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--gray);
+        }
+        
+        /* 图片查看器 */
+        .image-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-viewer.active {
+            display: flex;
+        }
+        
+        .viewer-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        
+        .viewer-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+        }
+        
+        .viewer-info {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: var(--dark);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+                font-size: 0.9em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .gallery-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="staff.html">管理组</a></li>
+                <li><a href="rules.html">规则</a></li>
+                <li><a href="commands.html">指令大全</a></li>
+                <li><a href="gallery.html" class="active">服务器风景</a></li>
+                <li><a href="contact.html">立即加入</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>服务器风景</h1>
+            <p class="subtitle">欣赏服务器中玩家建造的精美建筑</p>
+        </header>
+        
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索风景...">
+        </div>
+        
+        <!-- 分类导航 -->
+        <div class="category-nav" id="categoryNav">
+            <button class="category-btn active" data-category="all">全部风景</button>
+        </div>
+        
+        <!-- 画廊 -->
+        <div class="gallery-container" id="galleryContainer">
+            <!-- 图片将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <!-- 图片查看器 -->
+    <div class="image-viewer" id="imageViewer">
+        <button class="close-btn" onclick="closeViewer()">&times;</button>
+        <div class="viewer-content">
+            <img src="" alt="" class="viewer-image" id="viewerImage">
+            <div class="viewer-info">
+                <h3 id="viewerTitle"></h3>
+                <p id="viewerDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 MCQWQ 服务器. 保留所有权利.</p>
+    </footer>
+
+    <script src="js/dataManager.js"></script>
+    <script>
+        // 默认画廊数据
+        const defaultGalleryData = {
+            categories: [
+                { name: '建筑作品', color: '#00a8e8' },
+                { name: '自然风景', color: '#00d4aa' },
+                { name: '城市景观', color: '#ff6b6b' },
+                { name: '红石机械', color: '#9b59b6' },
+                { name: '服务器设施', color: '#f39c12' }
+            ],
+            images: [
+                {
+                    title: '主城城堡',
+                    description: '服务器主城的标志性建筑，由管理员团队精心设计建造',
+                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20castle%20spawn%20area%20with%20towers%20and%20flags&image_size=landscape_16_9',
+                    category: '建筑作品'
+                },
+                {
+                    title: '海底神殿',
+                    description: '玩家建造的海底神殿，内部装饰精美',
+                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20underwater%20temple%20with%20glass%20domes&image_size=landscape_16_9',
+                    category: '建筑作品'
+                },
+                {
+                    title: '自然景观',
+                    description: '服务器中的自然景观，包含湖泊和森林',
+                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20natural%20landscape%20with%20lake%20and%20forest&image_size=landscape_16_9',
+                    category: '自然风景'
+                },
+                {
+                    title: '现代城市',
+                    description: '玩家建造的现代城市，包含高楼大厦',
+                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20modern%20city%20with%20skyscrapers&image_size=landscape_16_9',
+                    category: '城市景观'
+                },
+                {
+                    title: '红石工厂',
+                    description: '自动化红石工厂，生产各种资源',
+                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20redstone%20factory%20with%20machines&image_size=landscape_16_9',
+                    category: '红石机械'
+                },
+                {
+                    title: '服务器 spawn',
+                    description: '服务器出生点，欢迎新玩家的地方',
+                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20spawn%20area%20with%20welcome%20center&image_size=landscape_16_9',
+                    category: '服务器设施'
+                }
+            ]
+        };
+
+        let currentGalleryData = null;
+        let filteredImages = [];
+
+        // 加载画廊数据
+        function loadGalleryData() {
+            currentGalleryData = DataManager.get('gallery');
+            renderCategories();
+            filterImages('all', '');
+        }
+
+        // 渲染分类导航
+        function renderCategories() {
+            const nav = document.getElementById('categoryNav');
+            nav.innerHTML = '<button class="category-btn active" data-category="all">全部风景</button>';
+            
+            currentGalleryData.categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.setAttribute('data-category', category.name);
+                btn.textContent = category.name;
+                btn.style.borderColor = category.color;
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterImages(category.name, document.getElementById('searchInput').value);
+                });
+                nav.appendChild(btn);
+            });
+        }
+
+        // 筛选图片
+        function filterImages(category, searchTerm) {
+            filteredImages = currentGalleryData.images.filter(img => {
+                const matchesCategory = category === 'all' || img.category === category;
+                const matchesSearch = searchTerm === '' || 
+                    img.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    img.description.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+            renderGallery();
+        }
+
+        // 渲染画廊
+        function renderGallery() {
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '';
+            
+            if (filteredImages.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<h3>没有找到匹配的风景</h3><p>请尝试其他关键词或分类</p>';
+                container.appendChild(noResults);
+                return;
+            }
+            
+            filteredImages.forEach(img => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                
+                const categoryInfo = currentGalleryData.categories.find(cat => cat.name === img.category);
+                const categoryColor = categoryInfo ? categoryInfo.color : '#00a8e8';
+                
+                // 获取实际的图片数据
+                const imageSrc = img.image ? (img.image.startsWith('http') ? img.image : FileManager.getImage(img.image)) : '';
+                
+                item.innerHTML = `
+                    <img src="${imageSrc}" alt="${img.title}" class="gallery-image" onclick="openViewer('${imageSrc}', '${img.title}', '${img.description}')">
+                    <div class="gallery-content">
+                        <div class="gallery-title">${img.title}</div>
+                        <div class="gallery-desc">${img.description}</div>
+                        <div class="gallery-category" style="background: rgba(${hexToRgb(categoryColor)}, 0.1); color: ${categoryColor};">
+                            ${img.category}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // 打开图片查看器
+        function openViewer(image, title, desc) {
+            const viewer = document.getElementById('imageViewer');
+            document.getElementById('viewerImage').src = image;
+            document.getElementById('viewerTitle').textContent = title;
+            document.getElementById('viewerDesc').textContent = desc;
+            viewer.classList.add('active');
+        }
+
+        // 关闭图片查看器
+        function closeViewer() {
+            document.getElementById('imageViewer').classList.remove('active');
+        }
+
+        // 点击背景关闭查看器
+        document.getElementById('imageViewer').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeViewer();
+            }
+        });
+
+        // 十六进制颜色转RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 168, 232';
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value;
+            const activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
+            filterImages(activeCategory, searchTerm);
+        });
+
+        // 页面加载时执行
+        window.addEventListener('DOMContentLoaded', loadGalleryData);
+    </script>
+</body>
+</html>

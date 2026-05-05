@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>立即加入 - 我的世界服务器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #636e72;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6em;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 0;
+            font-size: 0.95em;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            text-align: center;
+            margin: 20px 0 60px;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+        
+        .join-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 168, 232, 0.3);
+        }
+        
+        .join-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 168, 232, 0.4);
+        }
+        
+        /* 加入教程 */
+        .join-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .join-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--dark);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--primary), var(--secondary)) 1;
+            display: inline-block;
+        }
+        
+        .tutorial-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .step {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(0, 168, 232, 0.1);
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-content h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .step-content p {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .step-content ul {
+            color: var(--gray);
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .step-content li {
+            margin-bottom: 8px;
+        }
+        
+        /* 服务器信息 */
+        .server-info {
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .server-info h3 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--gray);
+        }
+        
+        .info-value {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        /* 常见问题 */
+        .faq-section {
+            margin-top: 40px;
+        }
+        
+        .faq-item {
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .faq-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 168, 232, 0.1);
+        }
+        
+        .faq-item h4 {
+            color: var(--dark);
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+        
+        .faq-item p {
+            color: var(--gray);
+            line-height: 1.8;
+        }
+        
+        /* 联系方式 */
+        .contact-section {
+            margin-top: 40px;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .contact-card {
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(0, 168, 232, 0.1);
+            transition: all 0.4s;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 168, 232, 0.15);
+        }
+        
+        .contact-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .contact-card h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .contact-card p {
+            color: var(--gray);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .contact-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .contact-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 168, 232, 0.3);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+                font-size: 0.85em;
+            }
+            
+            .logo {
+                font-size: 1.4em;
+            }
+            
+            .container {
+                padding: 80px 15px 30px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .join-section {
+                padding: 25px 20px;
+            }
+            
+            .step {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+            
+            .step-number {
+                align-self: flex-start;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .join-button {
+                padding: 12px 30px;
+                font-size: 1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero {
+                padding: 40px 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="staff.html">管理组</a></li>
+                <li><a href="rules.html">规则</a></li>
+                <li><a href="commands.html">指令大全</a></li>
+                <li><a href="gallery.html">服务器风景</a></li>
+                <li><a href="join.html" class="active">立即加入</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>立即加入我们</h1>
+            <p class="subtitle">快速加入MCQWQ服务器，开始你的冒险之旅</p>
+            <a href="#tutorial" class="join-button">开始加入</a>
+        </div>
+        
+        <div class="join-section">
+            <h2>加入教程</h2>
+            <div class="tutorial-steps" id="tutorial">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>准备Minecraft</h3>
+                        <p>确保你已经安装了Minecraft Java版1.20.1版本</p>
+                        <ul>
+                            <li>如果你还没有Minecraft，可以在<a href="https://www.minecraft.net/zh-hans" target="_blank">官方网站</a>购买并下载</li>
+                            <li>确保游戏已经更新到1.20.1版本</li>
+                            <li>服务器需要正版Minecraft账号才能加入</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>添加服务器</h3>
+                        <p>打开Minecraft，按照以下步骤操作：</p>
+                        <ul>
+                            <li>点击主菜单中的「多人游戏」</li>
+                            <li>点击「添加服务器」按钮</li>
+                            <li>在「服务器名称」中输入：MCQWQ服务器</li>
+                            <li>在「服务器地址」中输入：<strong>mcqwq.top</strong></li>
+                            <li>点击「完成」保存服务器</li>
+                        </ul>
+                    </div>

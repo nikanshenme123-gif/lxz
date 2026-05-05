@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理组成员 - 我的世界服务器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00a8e8;
+            --secondary: #00d4aa;
+            --accent: #ff6b6b;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #636e72;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 8px 0;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 20px 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin: 40px 0 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--gray);
+        }
+        
+        .staff-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .staff-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--dark);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--primary), var(--secondary)) 1;
+            display: inline-block;
+        }
+        
+        .staff-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+        }
+        
+        .staff-member {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(0,168,232,0.05) 0%, rgba(0,212,170,0.05) 100%);
+            border-radius: 15px;
+            transition: all 0.4s;
+            border: 1px solid rgba(0, 168, 232, 0.1);
+        }
+        
+        .staff-member:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(0, 168, 232, 0.15);
+        }
+        
+        .staff-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.2em;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0, 168, 232, 0.3);
+        }
+        
+        .staff-name {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 1.2em;
+        }
+        
+        .staff-rank {
+            font-size: 0.95em;
+            color: var(--gray);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+        
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+                font-size: 0.9em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .staff-list {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">MCQWQ</a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="staff.html" class="active">管理组</a></li>
+                <li><a href="rules.html">规则</a></li>
+                <li><a href="commands.html">指令大全</a></li>
+                <li><a href="gallery.html">服务器风景</a></li>
+                <li><a href="contact.html">立即加入</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>管理组成员</h1>
+            <p class="subtitle">认识我们的管理团队</p>
+        </header>
+        
+        <div class="staff-section">
+            <h2>服务器所有者</h2>
+            <div class="staff-list">
+                <div class="staff-member">
+                    <div class="staff-avatar">O</div>
+                    <div class="staff-name">Owner</div>
+                    <div class="staff-rank">服务器所有者</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="staff-section">
+            <h2>管理员</h2>
+            <div class="staff-list">
+                <div class="staff-member">
+                    <div class="staff-avatar">A</div>
+                    <div class="staff-name">Admin1</div>
+                    <div class="staff-rank">管理员</div>
+                </div>
+                <div class="staff-member">
+                    <div class="staff-avatar">A</div>
+                    <div class="staff-name">Admin2</div>
+                    <div class="staff-rank">管理员</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="staff-section">
+            <h2>版主</h2>
+            <div class="staff-list">
+                <div class="staff-member">
+                    <div class="staff-avatar">M</div>
+                    <div class="staff-name">Mod1</div>
+                    <div class="staff-rank">版主</div>
+                </div>
+                <div class="staff-member">
+                    <div class="staff-avatar">M</div>
+                    <div class="staff-name">Mod2</div>
+                    <div class="staff-rank">版主</div>
+                </div>
+                <div class="staff-member">
+                    <div class="staff-avatar">M</div>
+                    <div class="staff-name">Mod3</div>
+                    <div class="staff-rank">版主</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="staff-section">
+            <h2>助手</h2>
+            <div class="staff-list">
+                <div class="staff-member">
+                    <div class="staff-avatar">H</div>
+                    <div class="staff-name">Helper1</div>
+                    <div class="staff-rank">助手</div>
+                </div>
+                <div class="staff-member">
+                    <div class="staff-avatar">H</div>
+                    <div class="staff-name">Helper2</div>
+                    <div class="staff-rank">助手</div>
+                </div>
+                <div class="staff-member">
+                    <div class="staff-avatar">H</div>
+                    <div class="staff-name">Helper3</div>
+                    <div class="staff-rank">助手</div>
+                </div>
+                <div class="staff-member">
+                    <div class="staff-avatar">H</div>
+                    <div class="staff-name">Helper4</div>
+                    <div class="staff-rank">助手</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 MCQWQ 服务器. 保留所有权利.</p>
+    </footer>
+
+    <script>
+        // 加载管理组成员数据
+        function loadStaffContent() {
+            const data = JSON.parse(localStorage.getItem('mcqwqData')) || {
+                staff: {
+                    owner: {
+                        avatar: '',
+                        name: 'Owner',
+                        rank: '服务器所有者'
+                    },
+                    admins: [
+                        { avatar: '', name: 'Admin1', rank: '管理员' },
+                        { avatar: '', name: 'Admin2', rank: '管理员' }
+                    ],
+                    mods: [
+                        { avatar: '', name: 'Mod1', rank: '版主' },
+                        { avatar: '', name: 'Mod2', rank: '版主' },
+                        { avatar: '', name: 'Mod3', rank: '版主' }
+                    ],
+                    helpers: [
+                        { avatar: '', name: 'Helper1', rank: '助手' },
+                        { avatar: '', name: 'Helper2', rank: '助手' },
+                        { avatar: '', name: 'Helper3', rank: '助手' },
+                        { avatar: '', name: 'Helper4', rank: '助手' }
+                    ]
+                }
+            };
+
+            // 更新服务器所有者
+            const ownerElement = document.querySelector('.staff-section:nth-child(2) .staff-member');
+            if (ownerElement) {
+                const owner = data.staff.owner;
+                const avatarElement = ownerElement.querySelector('.staff-avatar');
+                if (owner.avatar) {
+                    avatarElement.innerHTML = `<img src="${owner.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${owner.name}">`;
+                    avatarElement.style.background = 'none';
+                } else {
+                    avatarElement.textContent = owner.name.charAt(0);
+                    avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                }
+                ownerElement.querySelector('.staff-name').textContent = owner.name;
+                ownerElement.querySelector('.staff-rank').textContent = owner.rank;
+            }
+
+            // 更新管理员
+            const adminElements = document.querySelectorAll('.staff-section:nth-child(3) .staff-member');
+            adminElements.forEach((element, index) => {
+                if (data.staff.admins[index]) {
+                    const admin = data.staff.admins[index];
+                    const avatarElement = element.querySelector('.staff-avatar');
+                    if (admin.avatar) {
+                        avatarElement.innerHTML = `<img src="${admin.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${admin.name}">`;
+                        avatarElement.style.background = 'none';
+                    } else {
+                        avatarElement.textContent = admin.name.charAt(0);
+                        avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                    }
+                    element.querySelector('.staff-name').textContent = admin.name;
+                    element.querySelector('.staff-rank').textContent = admin.rank;
+                }
+            });
+
+            // 更新版主
+            const modElements = document.querySelectorAll('.staff-section:nth-child(4) .staff-member');
+            modElements.forEach((element, index) => {
+                if (data.staff.mods[index]) {
+                    const mod = data.staff.mods[index];
+                    const avatarElement = element.querySelector('.staff-avatar');
+                    if (mod.avatar) {
+                        avatarElement.innerHTML = `<img src="${mod.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${mod.name}">`;
+                        avatarElement.style.background = 'none';
+                    } else {
+                        avatarElement.textContent = mod.name.charAt(0);
+                        avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                    }
+                    element.querySelector('.staff-name').textContent = mod.name;
+                    element.querySelector('.staff-rank').textContent = mod.rank;
+                }
+            });
+
+            // 更新助手
+            const helperElements = document.querySelectorAll('.staff-section:nth-child(5) .staff-member');
+            helperElements.forEach((element, index) => {
+                if (data.staff.helpers[index]) {
+                    const helper = data.staff.helpers[index];
+                    const avatarElement = element.querySelector('.staff-avatar');
+                    if (helper.avatar) {
+                        avatarElement.innerHTML = `<img src="${helper.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${helper.name}">`;
+                        avatarElement.style.background = 'none';
+                    } else {
+                        avatarElement.textContent = helper.name.charAt(0);
+                        avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                    }
+                    element.querySelector('.staff-name').textContent = helper.name;
+                    element.querySelector('.staff-rank').textContent = helper.rank;
+                }
+            });
+        }
+
+        // 页面加载时执行
+        window.addEventListener('DOMContentLoaded', loadStaffContent);
+    </script>
+</body>
+</html>
