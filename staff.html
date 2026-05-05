@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理组成员 - 我的世界服务器</title>
+    <title>管理组成员 - 旅行者服务器</title>
     <style>
+        /* 样式与您原有代码一致，为节省篇幅此处省略，请自行保留原有 style 部分 */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
         
         * {
@@ -30,7 +31,6 @@
             line-height: 1.6;
         }
         
-        /* 导航栏 */
         nav {
             background: rgba(255, 255, 255, 0.95);
             padding: 20px 0;
@@ -336,106 +336,98 @@
     </footer>
 
     <script>
-        // 加载管理组成员数据
-        function loadStaffContent() {
-            const data = JSON.parse(localStorage.getItem('mcqwqData')) || {
-                staff: {
-                    owner: {
-                        avatar: '',
-                        name: 'Owner',
-                        rank: '服务器所有者'
-                    },
-                    admins: [
-                        { avatar: '', name: 'Admin1', rank: '管理员' },
-                        { avatar: '', name: 'Admin2', rank: '管理员' }
-                    ],
-                    mods: [
-                        { avatar: '', name: 'Mod1', rank: '版主' },
-                        { avatar: '', name: 'Mod2', rank: '版主' },
-                        { avatar: '', name: 'Mod3', rank: '版主' }
-                    ],
-                    helpers: [
-                        { avatar: '', name: 'Helper1', rank: '助手' },
-                        { avatar: '', name: 'Helper2', rank: '助手' },
-                        { avatar: '', name: 'Helper3', rank: '助手' },
-                        { avatar: '', name: 'Helper4', rank: '助手' }
-                    ]
+        // 仅在 localStorage 有自定义管理组数据时才进行覆盖，否则保留 HTML 中原有的成员信息
+        function loadStaffIfCustom() {
+            try {
+                const saved = localStorage.getItem('mcqwqData');
+                if (!saved) return; // 没有自定义数据，保留 HTML 原有内容
+                const data = JSON.parse(saved);
+                if (!data.staff) return;
+                
+                // 有自定义数据，则按自定义数据更新各个区域
+                // 所有者
+                if (data.staff.owner) {
+                    const ownerCard = document.querySelector('.staff-section:nth-child(2) .staff-member');
+                    if (ownerCard) {
+                        const owner = data.staff.owner;
+                        const avatarDiv = ownerCard.querySelector('.staff-avatar');
+                        if (owner.avatar) {
+                            avatarDiv.innerHTML = `<img src="${owner.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                            avatarDiv.style.background = 'none';
+                        } else {
+                            avatarDiv.textContent = owner.name.charAt(0);
+                            avatarDiv.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                        }
+                        ownerCard.querySelector('.staff-name').textContent = owner.name;
+                        ownerCard.querySelector('.staff-rank').textContent = owner.rank;
+                    }
                 }
-            };
-
-            // 更新服务器所有者
-            const ownerElement = document.querySelector('.staff-section:nth-child(2) .staff-member');
-            if (ownerElement) {
-                const owner = data.staff.owner;
-                const avatarElement = ownerElement.querySelector('.staff-avatar');
-                if (owner.avatar) {
-                    avatarElement.innerHTML = `<img src="${owner.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${owner.name}">`;
-                    avatarElement.style.background = 'none';
-                } else {
-                    avatarElement.textContent = owner.name.charAt(0);
-                    avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                
+                // 管理员
+                if (data.staff.admins && data.staff.admins.length) {
+                    const adminCards = document.querySelectorAll('.staff-section:nth-child(3) .staff-member');
+                    adminCards.forEach((card, idx) => {
+                        if (data.staff.admins[idx]) {
+                            const admin = data.staff.admins[idx];
+                            const avatarDiv = card.querySelector('.staff-avatar');
+                            if (admin.avatar) {
+                                avatarDiv.innerHTML = `<img src="${admin.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                                avatarDiv.style.background = 'none';
+                            } else {
+                                avatarDiv.textContent = admin.name.charAt(0);
+                                avatarDiv.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                            }
+                            card.querySelector('.staff-name').textContent = admin.name;
+                            card.querySelector('.staff-rank').textContent = admin.rank;
+                        }
+                    });
                 }
-                ownerElement.querySelector('.staff-name').textContent = owner.name;
-                ownerElement.querySelector('.staff-rank').textContent = owner.rank;
+                
+                // 版主
+                if (data.staff.mods && data.staff.mods.length) {
+                    const modCards = document.querySelectorAll('.staff-section:nth-child(4) .staff-member');
+                    modCards.forEach((card, idx) => {
+                        if (data.staff.mods[idx]) {
+                            const mod = data.staff.mods[idx];
+                            const avatarDiv = card.querySelector('.staff-avatar');
+                            if (mod.avatar) {
+                                avatarDiv.innerHTML = `<img src="${mod.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                                avatarDiv.style.background = 'none';
+                            } else {
+                                avatarDiv.textContent = mod.name.charAt(0);
+                                avatarDiv.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                            }
+                            card.querySelector('.staff-name').textContent = mod.name;
+                            card.querySelector('.staff-rank').textContent = mod.rank;
+                        }
+                    });
+                }
+                
+                // 助手
+                if (data.staff.helpers && data.staff.helpers.length) {
+                    const helperCards = document.querySelectorAll('.staff-section:nth-child(5) .staff-member');
+                    helperCards.forEach((card, idx) => {
+                        if (data.staff.helpers[idx]) {
+                            const helper = data.staff.helpers[idx];
+                            const avatarDiv = card.querySelector('.staff-avatar');
+                            if (helper.avatar) {
+                                avatarDiv.innerHTML = `<img src="${helper.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                                avatarDiv.style.background = 'none';
+                            } else {
+                                avatarDiv.textContent = helper.name.charAt(0);
+                                avatarDiv.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+                            }
+                            card.querySelector('.staff-name').textContent = helper.name;
+                            card.querySelector('.staff-rank').textContent = helper.rank;
+                        }
+                    });
+                }
+            } catch(e) {
+                console.error('读取管理组数据失败', e);
             }
-
-            // 更新管理员
-            const adminElements = document.querySelectorAll('.staff-section:nth-child(3) .staff-member');
-            adminElements.forEach((element, index) => {
-                if (data.staff.admins[index]) {
-                    const admin = data.staff.admins[index];
-                    const avatarElement = element.querySelector('.staff-avatar');
-                    if (admin.avatar) {
-                        avatarElement.innerHTML = `<img src="${admin.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${admin.name}">`;
-                        avatarElement.style.background = 'none';
-                    } else {
-                        avatarElement.textContent = admin.name.charAt(0);
-                        avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
-                    }
-                    element.querySelector('.staff-name').textContent = admin.name;
-                    element.querySelector('.staff-rank').textContent = admin.rank;
-                }
-            });
-
-            // 更新版主
-            const modElements = document.querySelectorAll('.staff-section:nth-child(4) .staff-member');
-            modElements.forEach((element, index) => {
-                if (data.staff.mods[index]) {
-                    const mod = data.staff.mods[index];
-                    const avatarElement = element.querySelector('.staff-avatar');
-                    if (mod.avatar) {
-                        avatarElement.innerHTML = `<img src="${mod.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${mod.name}">`;
-                        avatarElement.style.background = 'none';
-                    } else {
-                        avatarElement.textContent = mod.name.charAt(0);
-                        avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
-                    }
-                    element.querySelector('.staff-name').textContent = mod.name;
-                    element.querySelector('.staff-rank').textContent = mod.rank;
-                }
-            });
-
-            // 更新助手
-            const helperElements = document.querySelectorAll('.staff-section:nth-child(5) .staff-member');
-            helperElements.forEach((element, index) => {
-                if (data.staff.helpers[index]) {
-                    const helper = data.staff.helpers[index];
-                    const avatarElement = element.querySelector('.staff-avatar');
-                    if (helper.avatar) {
-                        avatarElement.innerHTML = `<img src="${helper.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="${helper.name}">`;
-                        avatarElement.style.background = 'none';
-                    } else {
-                        avatarElement.textContent = helper.name.charAt(0);
-                        avatarElement.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
-                    }
-                    element.querySelector('.staff-name').textContent = helper.name;
-                    element.querySelector('.staff-rank').textContent = helper.rank;
-                }
-            });
         }
-
-        // 页面加载时执行
-        window.addEventListener('DOMContentLoaded', loadStaffContent);
+        
+        window.addEventListener('DOMContentLoaded', loadStaffIfCustom);
     </script>
 </body>
 </html>
