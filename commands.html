@@ -376,29 +376,64 @@
                     category: '传送指令'
                 },
                 {
-                    name: '/region',
-                    description: '领地管理指令',
-                    usage: '/region [create/claim/list/remove]',
+                    name: '/buyclaimblocks',
+                    description: '购买领地X',
+                    usage: '/buyclaimblocks <格数>',
                     category: '领地指令'
                 },
                 {
-                    name: '/buy',
-                    description: '购买物品',
-                    usage: '/buy <物品ID> <数量>',
-                    category: '经济指令'
-                },
-                {
-                    name: '/sell',
-                    description: '出售物品',
-                    usage: '/sell <物品ID> <数量>',
-                    category: '经济指令'
-                },
-                {
-                    name: '/shop',
+                    name: '/ah',
                     description: '打开商店',
-                    usage: '/shop',
+                    usage: '/ah,
                     category: '经济指令'
                 },
+                {
+                    name: '/ah sell'
+                    descripition: '上架手上物品 只算总体总共价格'
+                    usage: '/ah sell <价格>'
+                    category: '经济指令'
+                },
+                {
+                    name: '/ah sell'
+                    description: '上架手上的物品的单价'
+                    usage: '/ah sell <价格> <数量>'
+                    category: '经济指令'
+                },
+                {
+                    name: '/ah sell'
+                    description: '可以查看已上架被购买的物品 也可以撤销'
+                    usage: '/ah selling'
+                    category '经济指令'
+                },
+                {
+                   name: '/ah sold'
+                   descriprion: '查看已售卖的物品'
+                   usage: '/ah sold'
+                   category '经济系统'
+               },
+               {
+                  name: '/ah expired'
+                  descriprion: '取回超时的物品'
+                  usage: '/ah expired'
+                  category: '经济系统'
+              },
+              {
+                  name: '/ah bid'
+                  descriprion: '竞拍模式'
+                  usage: '/ah bid <商品ID> <价格>'
+                  category: '经济系统'
+              },
+              {
+                  name: '/ah buy'
+                  descriprion: '对指定物品快速购买 按商家价格'
+                  usage: '/ah buy <商品ID>'
+                  category: '经济系统'
+              },
+              {
+                 name: '/ah quickbuy'
+                 descripriom: '一键快速购买'
+                 usage: '/ah quickbuy'
+                 categoy: '经济系统'
             ]
         };
 
