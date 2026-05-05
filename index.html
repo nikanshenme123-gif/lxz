@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>MCQWQ · 我的世界服务器官方网站</title>
+    <title>旅行者 · 我的世界服务器官方网站</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
         
@@ -661,7 +661,7 @@
     <section class="features">
         <h2 class="section-title">服务器特色</h2>
         <div class="features-grid">
-            <!-- 卡片内容由js动态填充（保留静态兼容） -->
+            <!-- 卡片内容由js动态填充 -->
         </div>
     </section>
 
@@ -672,11 +672,11 @@
                 <div class="status-label">游戏版本</div>
             </div>
             <div class="status-item">
-                <div class="status-number" id="statusPlayers">500+</div>
+                <div class="status-number" id="statusPlayers">--</div>
                 <div class="status-label">注册玩家</div>
             </div>
             <div class="status-item">
-                <div class="status-number" id="statusUptime">99.9%</div>
+                <div class="status-number" id="statusUptime">--</div>
                 <div class="status-label">在线率</div>
             </div>
             <div class="status-item">
@@ -733,8 +733,111 @@
     </footer>
 
     <script>
+        // ======================== 用户配置区域 ========================
+        // 在这里填写您服务器的真实静态数据（版本、注册玩家数、在线率、开服起始日期、位置）
+        const SERVER_CONFIG = {
+            // 您的服务器地址（Java版，支持带端口）
+            host: 'play.simpfun.cn:31740',
+            
+            // 游戏版本（固定显示，不会被API覆盖）
+            version: '1.21.11',
+            
+            // 静态数据（请按实际情况修改）
+            registeredPlayers: '500+',      // 注册玩家数
+            uptimePercent: '99.9%',         // 在线率
+            startDate: '2023-05-01',        // 开服日期（用于计算开服时长，例如：'2023-05-01'）
+            
+            // 服务器位置（手动填写，API无法自动获取）
+            location: '中国 · 上海'
+        };
+        // ==============================================================
+        
+        // 实时状态API地址
+        const API_URL = `https://api.mcsrvstat.us/3/${SERVER_CONFIG.host}`;
+        
+        // 更新静态数据（版本、注册玩家、在线率、开服时长、位置）
+        function updateStaticInfo() {
+            document.getElementById('statusVersion').textContent = SERVER_CONFIG.version;
+            document.getElementById('statusPlayers').textContent = SERVER_CONFIG.registeredPlayers;
+            document.getElementById('statusUptime').textContent = SERVER_CONFIG.uptimePercent;
+            document.getElementById('locationSpan').textContent = SERVER_CONFIG.location;
+            
+            // 计算开服时长（基于配置的开服日期）
+            const start = new Date(SERVER_CONFIG.startDate);
+            const now = new Date();
+            const diff = now - start;
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (86400000)) / 3600000);
+                document.getElementById('serverRuntime').textContent = days > 0 ? `${days}天${hours}小时` : `${hours}小时`;
+            } else {
+                document.getElementById('serverRuntime').textContent = '开服日期有误';
+            }
+        }
+        
+        // 从API获取实时在线人数、延迟、图标（不更新版本号）
+        async function fetchRealTimeStatus() {
+            const startTime = performance.now();
+            const onlineSpan = document.getElementById('onlinePlayersSpan');
+            const pingSpan = document.getElementById('pingSpan');
+            const iconContainer = document.getElementById('iconContainer');
+            
+            // 显示加载中占位
+            onlineSpan.textContent = '⌛';
+            pingSpan.textContent = '-- ms';
+            iconContainer.innerHTML = '<div style="font-size:0.9rem;">加载中...</div>';
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const response = await fetch(API_URL, {
+                    signal: controller.signal,
+                    headers: {
+                        'User-Agent': 'TravelersServerWebsite/1.0 (admin@travelers.cn)'
+                    }
+                });
+                clearTimeout(timeoutId);
+                const endTime = performance.now();
+                const estimatedPing = Math.round(endTime - startTime);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                
+                if (data.online) {
+                    // 在线人数
+                    const online = data.players?.online ?? '?';
+                    onlineSpan.textContent = online;
+                    // 延迟
+                    pingSpan.textContent = `${estimatedPing} ms`;
+                    
+                    // 服务器图标
+                    if (data.icon && data.icon.startsWith('data:image/png;base64,')) {
+                        const img = document.createElement('img');
+                        img.src = data.icon;
+                        img.alt = '服务器图标';
+                        img.className = 'server-icon-img';
+                        img.style.width = '64px';
+                        img.style.height = '64px';
+                        iconContainer.innerHTML = '';
+                        iconContainer.appendChild(img);
+                    } else {
+                        iconContainer.innerHTML = '<span style="font-size:1rem;">✨ 在线</span>';
+                    }
+                } else {
+                    onlineSpan.textContent = '❌ 离线';
+                    pingSpan.textContent = '--';
+                    iconContainer.innerHTML = '<span style="font-size:1rem;">💤 休眠</span>';
+                }
+            } catch (err) {
+                console.warn('实时状态获取失败:', err);
+                onlineSpan.textContent = '⏳ 超时';
+                pingSpan.textContent = '-- ms';
+                iconContainer.innerHTML = '<span style="font-size:0.85rem;">🔌 无法连接</span>';
+            }
+        }
+        
         // --------------------------------------------------------------
-        // 1. 本地存储 / 默认数据 (特色、公告、注册玩家等)
+        // 加载静态内容（特色卡片、公告、英雄区域等，支持localStorage）
         // --------------------------------------------------------------
         function loadContent() {
             let data = null;
@@ -753,7 +856,6 @@
                     { icon: '🛡️', title: '专业管理', description: '经验丰富的管理团队，24/7在线维护，确保服务器的稳定运行和公平游戏环境。' },
                     { icon: '🎁', title: '丰富活动', description: '定期举办各类活动，包括建筑大赛、寻宝活动、节日庆典等，奖励丰厚等你来拿。' }
                 ],
-                status: { version: '1.21.11', players: '500+', uptime: '99.9%', startDate: '2024-01-01' },
                 announcements: [
                     { date: '2026-03-25', title: '服务器升级完成', content: '我们已完成服务器硬件升级，现在游戏运行更加流畅，欢迎大家体验！' },
                     { date: '2026-03-20', title: '春季建筑大赛开始报名', content: '春季建筑大赛正式开始报名，主题为"未来城市"，丰厚奖励等你来拿！' },
@@ -764,7 +866,6 @@
             const merged = {
                 hero: data?.hero || defaultData.hero,
                 features: data?.features || defaultData.features,
-                status: { ...defaultData.status, ...(data?.status || {}) },
                 announcements: data?.announcements || defaultData.announcements
             };
             
@@ -783,17 +884,6 @@
                 `;
             });
             
-            document.getElementById('statusVersion').textContent = merged.status.version;
-            document.getElementById('statusPlayers').textContent = merged.status.players;
-            document.getElementById('statusUptime').textContent = merged.status.uptime;
-            
-            const start = new Date(merged.status.startDate);
-            const now = new Date();
-            const diff = now - start;
-            const days = Math.floor(diff / (1000*60*60*24));
-            const hours = Math.floor((diff % (86400000)) / 3600000);
-            document.getElementById('serverRuntime').textContent = days > 0 ? `${days}天${hours}小时` : `${hours}小时`;
-            
             const announceList = document.querySelector('.announcement-list');
             announceList.innerHTML = '';
             merged.announcements.forEach(a => {
@@ -808,85 +898,7 @@
         }
         
         // --------------------------------------------------------------
-        // 2. 实时服务器状态 (MCSrvStat.us API) - 已配置为 play.simpfun.cn:31740
-        // --------------------------------------------------------------
-        const SERVER_HOST = 'play.simpfun.cn:31740';
-        const API_URL = `https://api.mcsrvstat.us/3/${SERVER_HOST}`;
-        
-        async function fetchRealTimeStatus() {
-            const startTime = performance.now();
-            const onlineSpan = document.getElementById('onlinePlayersSpan');
-            const pingSpan = document.getElementById('pingSpan');
-            const iconContainer = document.getElementById('iconContainer');
-            
-            // 显示加载中效果
-            onlineSpan.textContent = '⌛';
-            pingSpan.textContent = '-- ms';
-            iconContainer.innerHTML = '<div style="font-size:0.9rem;">加载中...</div>';
-            
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
-                const response = await fetch(API_URL, {
-                    signal: controller.signal,
-                    headers: {
-                        'User-Agent': 'MCQWQ-Website/1.0 (contact@mcqwq.top)'
-                    }
-                });
-                clearTimeout(timeoutId);
-                const endTime = performance.now();
-                const estimatedPing = Math.round(endTime - startTime);
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                
-                if (data.online) {
-                    // 在线人数
-                    const online = data.players?.online ?? '?';
-                    onlineSpan.textContent = online;
-                    // 延迟 (近似)
-                    pingSpan.textContent = `${estimatedPing} ms`;
-                    
-                    // 服务器图标 (base64)
-                    if (data.icon && data.icon.startsWith('data:image/png;base64,')) {
-                        const img = document.createElement('img');
-                        img.src = data.icon;
-                        img.alt = '服务器图标';
-                        img.className = 'server-icon-img';
-                        img.style.width = '64px';
-                        img.style.height = '64px';
-                        iconContainer.innerHTML = '';
-                        iconContainer.appendChild(img);
-                    } else {
-                        iconContainer.innerHTML = '<span style="font-size:1rem;">✨ 在线</span>';
-                    }
-                    // 可选：从 API 获取版本号，更新到某个位置（但不强制）
-                    if (data.version && data.version.includes) {
-                        const versionElem = document.getElementById('statusVersion');
-                        if (versionElem && data.version !== '1.21.11') {
-                            // 仅当版本确实不同时更新，避免覆盖本地存储设定
-                            versionElem.textContent = data.version;
-                        }
-                    }
-                } else {
-                    onlineSpan.textContent = '❌ 离线';
-                    pingSpan.textContent = '--';
-                    iconContainer.innerHTML = '<span style="font-size:1rem;">💤 休眠</span>';
-                }
-            } catch (err) {
-                console.warn('实时状态获取失败:', err);
-                onlineSpan.textContent = '⏳ 超时';
-                pingSpan.textContent = '-- ms';
-                iconContainer.innerHTML = '<span style="font-size:0.85rem;">🔌 无法连接</span>';
-                // 延迟显示错误不影响整体体验
-            }
-        }
-        
-        // 定时器 (30秒刷新)
-        let statusInterval = null;
-        
-        // --------------------------------------------------------------
-        // 3. 粒子背景 & 滚动动画 (保留原样)
+        // 粒子背景 & 滚动动画
         // --------------------------------------------------------------
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
@@ -968,13 +980,13 @@
         }
         
         // --------------------------------------------------------------
-        // 4. 启动所有功能
+        // 页面启动
         // --------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
-            loadContent();                // 加载静态数据（版本/注册玩家/公告/特色）
-            fetchRealTimeStatus();       // 立即获取实时数据
-            if (statusInterval) clearInterval(statusInterval);
-            statusInterval = setInterval(fetchRealTimeStatus, 30000); // 30秒自动刷新
+            loadContent();                 // 加载特色、公告等
+            updateStaticInfo();           // 加载版本、注册玩家、在线率、开服时长、位置
+            fetchRealTimeStatus();        // 立即获取实时在线人数+延迟+图标
+            setInterval(fetchRealTimeStatus, 30000); // 30秒自动刷新
             
             resizeCanvas();
             initParticles();
@@ -986,9 +998,6 @@
             resizeCanvas();
             initParticles();
         });
-        
-        // 位置信息无法从协议获取, 手动说明(可改为真实机房城市)
-        document.getElementById('locationSpan').textContent = '中国 · 上海';
     </script>
 </body>
 </html>
